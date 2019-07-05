@@ -227,12 +227,12 @@ AST CompilationUnit() :
 }
 {
     // module declaration
-    exp = ModuleDecl(imports) { return exp; }
+    exp = ModuleDecl(imports) {    return exp;  }
   |
     // import and require statements
-    exp = Script(imports, requires)  { return exp; }
+    exp = Script(imports, requires)  {    return exp;  }
   |
-    // program has nothing
+    // program has nothing, return unitValue
     { return build.unitValue(null); }
 }
 
@@ -600,7 +600,8 @@ AST TypeDeclaration() :
     List<Type> comprisesList=null;
     boolean isTagged = false;
     Token selfName = null;
-    Object tagInfo = null; boolean isResource = false;
+    Object tagInfo = null;
+    boolean isResource = false;
 }
 {
     [ <RESOURCE> { isResource = true; } ]
@@ -729,7 +730,7 @@ AST ValDeclType() :
 AST EffectDeclType() :
 { Token name; Token effects = null;}
 {
-  <EFFECT> name = <IDENTIFIER> [<EQUALS> effects = <DSL_LITERAL>] <NEWLINE> {
+  <EFFECT> name = <IDENTIFIER> [ <EQUALS> effects = <DSL_LITERAL> ] <NEWLINE> {
   	if (effects==null) {
     	return build.effectDeclType(name.image, null, loc(name));
   	}
