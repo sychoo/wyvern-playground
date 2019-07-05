@@ -1,0 +1,25 @@
+module def simplehandler(params: wyvern.TPostProcessor): THttpHandler
+
+import simpledb
+
+val db = simpledb()
+val numParam: Int = 4
+
+def responseFile(): String
+    "form.html"
+
+// manipulate params (say hello to person) and send response string/html
+def sendResponse(): String
+    val line1 = "<html><h1> Hello " + db.getFirstName() + " " + db.getLastName() + "</h1>"
+    val line2 = "<h2> You are " + db.getAge() + " years old</h2>"
+    val line3 = "<h2> You come from " + db.getCountry() + " </h2></html>"
+    line1 + line2 + line3
+
+def setParams(postParams: String): Unit
+    db.setFirstName(params.getParamByIndex(postParams, 0))
+    db.setLastName(params.getParamByIndex(postParams, 1))
+    db.setAge(params.getParamByIndex(postParams, 2))
+    db.setCountry(params.getParamByIndex(postParams, 3))
+
+def getFormData(): String
+    params.getParamMappingToString()

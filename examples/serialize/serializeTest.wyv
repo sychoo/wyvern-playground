@@ -1,0 +1,41 @@
+require stdout
+require json
+import cell
+
+// make a cell object
+val c : cell.Cell = cell.make()
+
+// serialize to JSON and print as JSON
+val jsonfile : json.JSON = json.serializeToJSON(c)
+val jsonString : String = jsonfile.toString()
+
+// json from String obj
+val fromString : json.JSON = json.stringToJSON(jsonString)
+
+val deserialized : cell.Cell = json.deserializeFromJSON(fromString)
+	
+// check preservation of object
+def display(x : cell.Cell) : Unit
+	stdout.printBoolean(x.bool)
+	stdout.println()
+	stdout.printInt(x.int)
+	stdout.println()
+	stdout.print(x.str)
+	stdout.println()
+	stdout.printFloat(x.flt)
+	stdout.println()
+	stdout.printInt(x.sub.x)
+
+stdout.print("Original: ")
+display(c)
+stdout.println()
+
+stdout.print(jsonString)
+stdout.println()
+
+stdout.print(fromString.toString())
+stdout.println()
+
+stdout.print("Deserialized: ")
+display(deserialized)
+stdout.println()

@@ -1,0 +1,48 @@
+module util : {}
+
+import wyvern.option
+import wyvern.collections.list
+
+type List = list.List
+type Option = option.Option
+
+def unwrap[T](o: Option[T]): T
+    o.getOrElse(() => runtime.fail("Unwrapped None"))
+
+def join(l: List[String], delim: String): String
+    if (l.length() == 0)
+            ""
+        else
+            var s: String = ""
+            l.do(e => s = s + e + delim)
+            s.substring(0,s.length()-delim.length())
+
+// c should be one character
+def replace(s: String, c: String, replacement: String): String
+    def replaceAcc(s: String, c: String, replacement: String, acc: String): String
+        if (s == "")
+                acc
+            elif (s.substring(0, 1) == c)
+                recur replaceAcc(s.substring(1, s.length()), c, replacement, acc + replacement)
+            else
+                recur replaceAcc(s.substring(1, s.length()), c, replacement, acc + s.substring(0, 1))
+    val x = replaceAcc(s, c, replacement, "")
+    if (x.length() == 0)
+        runtime.fail("tiny")
+    x
+
+// assume delim is one character
+def split(s: String, delim: String) : List[String]
+    def loop(l: List[String], prev: Int, i: Int): List[String]
+        if(i == s.length())
+                l.append(s.substring(prev, i))
+                l
+            elif (s.substring(i, i+1) == delim)
+                if (prev == i)
+                        recur loop(l, i + 1, i +1)
+                    else
+                        l.append(s.substring(prev, i))
+                        recur loop(l, i + 1, i+1)
+            else
+                recur loop(l, prev, i+1)
+    loop(list.make[String](), 0, 0)

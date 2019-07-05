@@ -1,0 +1,32 @@
+require stdout
+
+import wyvern.collections.list
+
+val list : list.List[Int] = {1, 2, 3}
+
+def outer(f:Unit->Unit):Unit = f()
+
+def foo():Unit
+    outer(() =>
+        stdout.print("life's")
+        stdout.print("good!\n")
+    )
+
+val func1 = (() =>
+    stdout.print("hi")
+    stdout.print("world!\n")
+)
+
+func1()
+foo()
+    
+val func2 = (() =>
+    stdout.print("hi\n")
+)
+
+list.do(x =>
+        stdout.printInt(x)
+        stdout.println()
+    )
+
+func2()

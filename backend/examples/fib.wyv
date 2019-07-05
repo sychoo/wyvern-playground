@@ -1,0 +1,17 @@
+require stdout
+
+def fib(n: Int): Int
+    if (n < 2)
+            n
+        else
+            fib(n-1) + fib(n-2)
+
+def loop(i: Int): Unit
+    if (i == 10)
+            unit
+        else
+            stdout.printInt(fib(i))
+            stdout.println()
+            loop(i + 1)
+
+loop(0)
