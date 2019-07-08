@@ -1,7 +1,6 @@
 package wyvern.tools.typedAST.core.declarations;
 
 import java.util.List;
-
 import wyvern.target.corewyvernIL.BindingSite;
 import wyvern.target.corewyvernIL.decltype.DeclType;
 import wyvern.target.corewyvernIL.decltype.ValDeclType;
@@ -23,136 +22,130 @@ import wyvern.tools.types.Type;
 import wyvern.tools.types.UnresolvedType;
 
 public class RecConstructDeclaration extends Declaration implements CoreAST {
+    private String variableName;
+    private Type declaredType;
     private ExpressionAST definition;
     private NameBinding binding;
-    private Type declaredType;
-    private String variableName;
-    private ValueType cachedValueType;
     private FileLocation location = FileLocation.UNKNOWN;
 
-    public RecConstructDeclaration(String name, Type type, TypedAST definition, FileLocation location) {
-        if (type instanceof UnresolvedType) {
-            this.variableName = name;
-            this.declaredType = type;
-        }
-
+    public RecConstructDeclaration(String variableName, Type declaredType, TypedAST definition, FileLocation location) {
+        this.variableName = variableName;
+        this.declaredType = declaredType;
         this.definition = (ExpressionAST) definition;
-        this.binding = new NameBindingImpl(name, type);
+        this.binding = new NameBindingImpl(variableName, declaredType);
         this.location = location;
     }
 
-  @Override
-  public Type getType() {
-    return binding.getType();
-  }
-
-  @Override
-  public String getName() {
-    return binding.getName();
-  }
-
-  @Override
-  public FileLocation getLocation() {
-    return this.location;
-  }
-
-  public ExpressionAST getDefinition() {
-    return this.definition;
-  }
-
-  @Override
-  public <S, T> T acceptVisitor(TypedASTVisitor<S, T> visitor, S state) {
-    return visitor.visit(state, this);
-  }
-
-  @Override
-  public void genTopLevel(TopLevelContext tlc) {
-    ValueType declType = getILValueType(tlc.getContext());
-    tlc.addLet(new BindingSite(getName()), getILValueType(tlc.getContext()),
-        this.definition.generateIL(tlc.getContext(), declType, tlc.getDependencies()), false);
-  }
-
-  @Override
-  public void checkAnnotated(GenContext ctxWithoutThis) {
-    if (binding.getType() == null) {
-      try {
-        ValueType vt = getILValueType(ctxWithoutThis);
-      } catch (RuntimeException e) {
-        ToolError.reportError(ErrorMessage.REC_NEEDS_TYPE, this, binding.getName());
-      }
-    }
-  }
-
-  @Override
-  public DeclType genILType(GenContext ctx) {
-    ValueType vt = getILValueType(ctx);
-    return new ValDeclType(getName(), vt);
-  }
-
-  private ValueType getILValueType(GenContext ctx) {
-    if (cachedValueType != null) {
-      return cachedValueType;
+    @Override
+    public Type getType() {
+        return binding.getType();
     }
 
-    ValueType vt;
-    if (declaredType != null) {
-      vt = declaredType.getILType(ctx);
-    } else {
-
-      final Type type = this.binding.getType();
-      if (type != null) {
-        vt = type.getILType(ctx);
-      } else {
-        vt = definition.generateIL(ctx, null, null).typeCheck(ctx, null);
-      }
+    @Override
+    public String getName() {
+        return binding.getName();
     }
-    cachedValueType = vt;
-    return vt;
-  }
 
-  @Override
-  public wyvern.target.corewyvernIL.decl.Declaration generateDecl(GenContext ctx, GenContext thisContext) {
-
-    ValueType expectedType = getILValueType(thisContext);
-    return new wyvern.target.corewyvernIL.decl.RecConstructDeclaration(getName(), expectedType,
-        definition.generateIL(ctx, expectedType, null), location);
-  }
-
-  @Override
-  public wyvern.target.corewyvernIL.decl.Declaration topLevelGen(GenContext ctx, List<TypedModuleSpec> dependencies) {
-    // TODO Auto-generated method stub
-    return null;
-  }
-
-  @Override
-  public void addModuleDecl(TopLevelContext tlc) {
-    wyvern.target.corewyvernIL.decl.Declaration decl =
-        new wyvern.target.corewyvernIL.decl.RecConstructDeclaration(getName(), getILValueType(tlc.getContext()),
-            new wyvern.target.corewyvernIL.expression.Variable(getName()), location);
-    DeclType dt = genILType(tlc.getContext());
-    tlc.addModuleDecl(decl, dt);
-  }
-
-  public String toString() {
-    return variableName + ": " + declaredType.toString() + " = ...";
-  }
-
-  @Override
-  public StringBuilder prettyPrint() {
-    StringBuilder sb = new StringBuilder();
-    sb.append(variableName);
-    sb.append(" : ");
-    if (declaredType != null) {
-      sb.append(declaredType.toString());
-    } else {
-      sb.append("null");
+    @Override
+    public FileLocation getLocation() {
+        return this.location;
     }
-    sb.append(" = ");
-    if (definition != null) {
-      sb.append(definition.prettyPrint());
-    } else {
-      sb.append("null");
+
+    public ExpressionAST getDefinition() {
+        return this.definition;
     }
-    return sb;
-  }
+
+    @Override
+    public <S, T> T acceptVisitor(TypedASTVisitor<S, T> visitor, S state) {
+        System.out.println("visited recConstruct");
+        return visitor.visit(state, this);
+    }
+
+    @Override
+    public void genTopLevel(TopLevelContext tlc) {
+        ValueType declType = getILValueType(tlc.getContext());
+        tlc.addLet(new BindingSite(getName()), getILValueType(tlc.getContext()),
+                this.definition.generateIL(tlc.getContext(), declType, tlc.getDependencies()), false);
+    }
+
+    @Override
+    public void checkAnnotated(GenContext ctxWithoutThis) {
+        if (binding.getType() == null) {
+            try {
+                ValueType vt = getILValueType(ctxWithoutThis);
+            } catch (RuntimeException e) {
+                ToolError.reportError(ErrorMessage.REC_NEEDS_TYPE, this, binding.getName());
+            }
+        }
+    }
+
+    @Override
+    public DeclType genILType(GenContext ctx) {
+        ValueType vt = getILValueType(ctx);
+        return new ValDeclType(getName(), vt);
+    }
+
+
+    private ValueType getILValueType(GenContext ctx) {
+        ValueType vt;
+        if (declaredType != null) {
+            vt = declaredType.getILType(ctx);
+        } else {
+            final Type type = this.binding.getType();
+            if (type != null) {
+                vt = type.getILType(ctx);
+            } else {
+                vt = definition.generateIL(ctx, null, null).typeCheck(ctx, null);
+            }
+        }
+
+        return vt;
+    }
+
+    @Override
+    public wyvern.target.corewyvernIL.decl.Declaration generateDecl(GenContext ctx, GenContext thisContext) {
+
+        ValueType expectedType = getILValueType(thisContext);
+        return new wyvern.target.corewyvernIL.decl.RecConstructDeclaration(getName(), expectedType,
+                definition.generateIL(ctx, expectedType, null), location);
+    }
+
+    @Override
+    public wyvern.target.corewyvernIL.decl.Declaration topLevelGen(GenContext ctx, List<TypedModuleSpec> dependencies) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public void addModuleDecl(TopLevelContext tlc) {
+        wyvern.target.corewyvernIL.decl.Declaration decl =
+                new wyvern.target.corewyvernIL.decl.RecConstructDeclaration(getName(), getILValueType(tlc.getContext()),
+                        new wyvern.target.corewyvernIL.expression.Variable(getName()), location);
+        DeclType dt = genILType(tlc.getContext());
+        tlc.addModuleDecl(decl, dt);
+    }
+
+    public String toString() {
+        return "rec " + variableName + ": " + declaredType.toString() + " = ...";
+    }
+
+    @Override
+    public StringBuilder prettyPrint() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("rec ");
+        sb.append(variableName);
+        sb.append(" : ");
+        if (declaredType != null) {
+            sb.append(declaredType.toString());
+        } else {
+            sb.append("null");
+        }
+        sb.append(" = ");
+        if (definition != null) {
+            sb.append(definition.prettyPrint());
+        } else {
+            sb.append("null");
+        }
+        return sb;
+    }
 }

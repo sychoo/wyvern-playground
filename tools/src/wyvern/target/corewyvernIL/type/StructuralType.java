@@ -44,6 +44,7 @@ public class StructuralType extends ValueType {
     public StructuralType(BindingSite selfSite, List<DeclType> declTypes) {
         this(selfSite, declTypes, false);
     }
+
     public StructuralType(BindingSite selfSite, List<DeclType> declTypes, boolean resourceFlag) {
         this(selfSite, declTypes, resourceFlag, null);
     }

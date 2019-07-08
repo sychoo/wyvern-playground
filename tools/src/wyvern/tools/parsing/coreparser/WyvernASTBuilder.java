@@ -63,8 +63,8 @@ import wyvern.tools.typedAST.core.declarations.RecDeclaration;
 public class WyvernASTBuilder implements ASTBuilder<TypedAST, Type> {
 
     @Override
-    public TypedAST recDecl(TypedAST body) {
-      return new RecDeclaration(body);
+    public TypedAST recDecl(TypedAST body, FileLocation loc) {
+      return new RecDeclaration(body, loc);
     }
 
     @Override

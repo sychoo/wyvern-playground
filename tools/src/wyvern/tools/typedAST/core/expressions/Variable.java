@@ -67,12 +67,6 @@ public class Variable extends AbstractExpressionAST implements CoreAST, Assignab
         StringBuilder sb = new StringBuilder();
         sb.append("Variable(\"");
         sb.append(name);
-        /*sb.append("\" : ");
-        if (binding.getType() != null) {
-            sb.append(binding.getType().toString());
-        } else {
-            sb.append("null");
-        }*/
         sb.append(")");
         return sb;
     }

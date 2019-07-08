@@ -2,14 +2,16 @@ package wyvern.tools.parsing.coreparser;
 
 import java.math.BigInteger;
 import java.net.URI;
+import java.util.LinkedList;
 import java.util.List;
 
 import wyvern.tools.errors.FileLocation;
 import wyvern.tools.generics.GenericArgument;
 import wyvern.tools.generics.GenericParameter;
+import wyvern.tools.typedAST.core.declarations.RecConstructDeclaration;
 
 interface ASTBuilder<AST, Type> {
-    AST recDecl(AST body);
+    AST recDecl(AST body, FileLocation loc);
     AST recConstructDecl(String name, Type type, AST body, FileLocation loc);
     
     AST sequence(AST t1, AST t2, boolean inModule);

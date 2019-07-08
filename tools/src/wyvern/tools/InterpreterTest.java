@@ -15,7 +15,7 @@ import wyvern.stdlib.Globals;
 @Category(RegressionTests.class)
 public class InterpreterTest {
     protected static final String WYVERN_PATH = "/Users/sychoo/wyvern-forked";
-    protected static final String PROGRAM_PATH = "/Users/sychoo/wyvern-code/rec.wyv";
+    protected static final String PROGRAM_PATH = "/Users/sychoo/wyvern-code/rec2.wyv";
 
     protected static void setEnv(Map<String, String> newenv) {
         try {

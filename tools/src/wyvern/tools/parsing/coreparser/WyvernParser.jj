@@ -3,7 +3,7 @@ options {
   // we define our own token manager
   USER_TOKEN_MANAGER = true;
   STATIC = false;
-
+//  DEBUG_PARSER = true; // debugger, to be deleted
   /* default values here:
       LOOKAHEAD = 1;
       CHOICE_AMBIGUITY_CHECK = 2;
@@ -20,6 +20,8 @@ options {
       BUILD_TOKEN_MANAGER = true;
       SANITY_CHECK = true;
       FORCE_LA_CHECK = false;
+      STATIC = true;
+      USE_TOKEN_MANAGER = false;
   */
 }
 /*** end of options definition ***/
@@ -560,18 +562,32 @@ AST VarDeclaration() :
 }
 
 AST RecDeclaration() :
-{ AST body; }
+{   AST body;  Token t; }
 {
-    <REC> <NEWLINE> <INDENT> body = RecBody() <DEDENT>
+    t = <REC> <NEWLINE> <INDENT> body = RecBody() <DEDENT>
     {
-	      return build.recDecl(body);
+	      return build.recDecl(body, loc(t) /*temporary way to detect location*/);
     }
 }
 
-AST RecBody() :
-{   AST exp1;
-    AST exp2;
+/*
+List RecBody() :
+{
+    RecConstructDeclaration exp1, exp2;
+    LinkedList<RecConstructDeclaration> recList = new LinkedList<RecConstructDeclaration>();
 }
+{
+    exp1 = RecConstruct()
+    ( exp2 = RecConstruct() {   recList.addLast(exp2);   } )*
+    {
+        recList.addFirst(exp1);
+        return recList;
+    }
+}
+*/
+
+AST RecBody() :
+{ AST exp1; AST exp2; }
 {
     exp1 = RecConstruct()
     ( exp2 = RecConstruct() { exp1 = build.sequence(exp1, exp2, false); } )*
@@ -1047,6 +1063,26 @@ Type NonArrowType() :
         }
         return t;
     }
+  |
+        // debugger for placeholder type
+        <BOOLEANNOT> id = <IDENTIFIER>
+        (<DOT> id2 = <IDENTIFIER> {
+            if (exp == null) {
+                exp = build.var(id.image, loc(id));
+            } else {
+                exp = build.invocation(exp, id.image, null, loc(id));
+            }
+            id = id2;
+        })*
+        {
+            System.out.println("PlaceHolder Type Detected at " + loc(id) + " with name = " + id.image); // debugger print
+            if (exp == null) {
+                t = build.nominalType(id.image, loc(id));
+            } else {
+                t = build.qualifiedType(exp, id2.image);
+            }
+            return t;
+        }
 }
 
 AST BooleanRelationalExpression(ExpFlags flags) :

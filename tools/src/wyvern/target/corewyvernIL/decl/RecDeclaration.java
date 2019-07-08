@@ -5,16 +5,20 @@ import java.util.Set;
 import wyvern.target.corewyvernIL.astvisitor.ASTVisitor;
 import wyvern.target.corewyvernIL.decltype.DeclType;
 //import wyvern.target.corewyvernIL.support.TopLevelContext;
+import wyvern.target.corewyvernIL.expression.IExpr;
 import wyvern.target.corewyvernIL.support.TypeContext;
+import wyvern.target.corewyvernIL.type.ValueType;
+import wyvern.tools.errors.FileLocation;
 import wyvern.tools.typedAST.interfaces.ExpressionAST;
 import wyvern.tools.typedAST.interfaces.TypedAST;
 
-public class RecDeclaration extends NamedDeclaration {
+public class RecDeclaration extends DeclarationWithRHS {
   private ExpressionAST body;
+  private ValueType type;
 
-  public RecDeclaration(TypedAST body) {
-    super(null, null);
-    this.body = (ExpressionAST) body;
+  public RecDeclaration(String fieldName, ValueType type, IExpr iExpr, FileLocation loc) {
+    super(fieldName, iExpr, loc);
+    this.type = type;
   }
 
   @Override
@@ -30,8 +34,7 @@ public class RecDeclaration extends NamedDeclaration {
   }
 
   @Override
-  public DeclType typeCheck(TypeContext ctx, TypeContext thisCtx) {
-    // TODO Auto-generated method stub
+  public ValueType getType() {
     return null;
   }
 

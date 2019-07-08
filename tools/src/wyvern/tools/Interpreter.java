@@ -26,8 +26,14 @@ public final class Interpreter {
     public static void main(String[] args) {
         // check if 1 argument is supplied.
         if (args.length != 1) {
-            System.err.println("usage: wyvern <filename>");
-            System.exit(1);
+            // disable prelude if two arguments found, debugger
+            if (args.length == 2) {
+                Globals.setUsePrelude(false);
+            }
+            else {
+                System.err.println("usage: wyvern <filename>");
+                System.exit(1);
+            }
         }
         String filename = args[0];
         Path filepath = Paths.get(filename);
