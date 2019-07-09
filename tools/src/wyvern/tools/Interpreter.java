@@ -6,6 +6,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import wyvern.stdlib.Globals;
+import wyvern.stdlib.support.Sys;
 import wyvern.target.corewyvernIL.ASTNode;
 import wyvern.target.corewyvernIL.astvisitor.PlatformSpecializationVisitor;
 import wyvern.target.corewyvernIL.astvisitor.TailCallVisitor;
@@ -84,6 +85,9 @@ public final class Interpreter {
             Module m = state.getResolver().load("unknown", filepath.toFile(), true);
             IExpr program = m.getExpression();
 
+            System.out.println("\nBEGIN.................");
+            System.out.println(program);
+            System.out.println("END...................\n");
             program = state.getResolver().wrap(program, m.getDependencies());
             program = (IExpr) PlatformSpecializationVisitor.specializeAST((ASTNode) program, "java", Globals.getGenContext(state));
 

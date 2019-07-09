@@ -150,7 +150,7 @@ public class SeqExpr extends Expression {
     @Override
     public void doPrettyPrint(Appendable dest, String indent) throws IOException {
         String newIndent = indent + "    ";
-        dest.append("seqexpr\n");
+        dest.append("\nseqexpr\n");
 
         for (HasLocation elem : elements) {
             if (elem instanceof VarBinding) {

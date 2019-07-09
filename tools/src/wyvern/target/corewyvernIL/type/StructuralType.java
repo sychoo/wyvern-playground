@@ -210,9 +210,11 @@ public class StructuralType extends ValueType {
             List<DeclType> candidates = findDecls(dt.getName(), ctx);
             //DeclType candidateDT = findMatchingDecl(dt.getName(), cdt -> cdt.isTypeOrEffectDecl() != dt.isTypeOrEffectDecl(), ctx);
             //DeclType candidateDT = findDecl(dt.getName(), ctx);
+
             if (candidates.isEmpty()) {
                 if (!reason.isDefined()) {
                     reason.setReason("missing declaration " + dt.getName());
+                    throw new RuntimeException();
                 }
                 return false;
             }
@@ -225,6 +227,8 @@ public class StructuralType extends ValueType {
                 }
                 return false;
             }
+
+
         }
 
         // a resource type is not a subtype of a non-resource type

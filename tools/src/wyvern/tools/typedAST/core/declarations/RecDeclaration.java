@@ -31,12 +31,14 @@ public class RecDeclaration extends Declaration implements CoreAST {
     private String variableName; // generated fresh variable
     private List<NameBinding> bodyNameBindings; // store the name binding of the bodies
     private FileLocation location = FileLocation.UNKNOWN;
+    private BindingSite bindingSite;
 
     public RecDeclaration(TypedAST body, FileLocation location) {
         this.original_body = (ExpressionAST) body;
         this.body = ((Sequence) body).getExps();
         this.location = location;
         this.variableName = GenContext.generateName(); // generate fresh variable
+        this.bindingSite = new BindingSite(this.variableName);
         System.out.println();
         System.out.println("RecDeclaration Body: " + this.body); // debugger
         System.out.println();
@@ -78,13 +80,20 @@ public class RecDeclaration extends Declaration implements CoreAST {
         return generateDecl(ctx, ctx);
     }
 
+    public BindingSite getSite() {
+        return this.bindingSite;
+    }
+
     @Override
     public void genTopLevel(TopLevelContext tlc) {
         ValueType declType = getILValueType(tlc.getContext());
-        tlc.addLet(new BindingSite(getName()),
+        System.out.println(this.original_body.generateIL(tlc.getContext(), declType, tlc.getDependencies()));
+
+        // debugger
+        tlc.addLet(this.getSite(),
                 getILValueType(tlc.getContext()),
                 this.original_body.generateIL(tlc.getContext(), declType, tlc.getDependencies()),
-                false);
+                true);
     }
 
     @Override
@@ -105,7 +114,7 @@ public class RecDeclaration extends Declaration implements CoreAST {
             constructVariableName = ((RecConstructDeclaration) arg).getName();
             type = ((RecConstructDeclaration) arg).getType();
             valueType = type.getILType(ctx);
-            ctx = ctx.extend(constructVariableName, new RecExpression(/*to be debugger*/new BindingSite(constructVariableName), valueType), valueType);
+            ctx = ctx.extend(constructVariableName, new RecExpression(/*to be debugger*/getSite(), valueType), valueType);
         }
         return ctx;
     }
@@ -117,7 +126,7 @@ public class RecDeclaration extends Declaration implements CoreAST {
             typeList.add(((RecConstructDeclaration) arg).genILType(ctx));
         }
 
-        StructuralType valueType = new StructuralType(this.getName(), typeList);
+        StructuralType valueType = new StructuralType(this.getSite(), typeList, false, this.getLocation());
         return valueType;
     }
 }

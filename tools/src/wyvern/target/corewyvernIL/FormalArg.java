@@ -22,7 +22,7 @@ public class FormalArg extends ASTNode implements IASTNode {
 
     @Override
     public void doPrettyPrint(Appendable dest, String indent) throws IOException {
-        dest.append(site.getName()).append(':');
+        dest.append(site.getName()).append(" : ");
         type.doPrettyPrint(dest, indent);
     }
 

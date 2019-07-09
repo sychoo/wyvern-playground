@@ -78,6 +78,7 @@ public class VarBinding implements HasLocation {
     }
 
     public void doPrettyPrint(Appendable dest, String indent) throws IOException {
+        dest.append("\n");
         dest.append(indent).append(getVarName()).append(" : ");
         getType().doPrettyPrint(dest, indent);
         dest.append(" = ");
