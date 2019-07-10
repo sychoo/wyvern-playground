@@ -272,8 +272,13 @@ public class StructuralType extends ValueType {
 
     @Override
     public List<DeclType> findDecls(String declName, TypeContext ctx) {
+        System.out.println("decl name: " + declName); // debugger
+        System.out.println("ctx: " + ctx); // debugger
+
         List<DeclType> mdts = new LinkedList<DeclType>();
         for (DeclType mdt : getDeclTypes()) {
+            System.out.println("mdt.getName: " + mdt.getName()); // debugger
+
             if (mdt.getName().equals(declName)) {
                 mdts.add(mdt);
             }

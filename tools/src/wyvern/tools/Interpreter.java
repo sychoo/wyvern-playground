@@ -6,7 +6,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import wyvern.stdlib.Globals;
-import wyvern.stdlib.support.Sys;
 import wyvern.target.corewyvernIL.ASTNode;
 import wyvern.target.corewyvernIL.astvisitor.PlatformSpecializationVisitor;
 import wyvern.target.corewyvernIL.astvisitor.TailCallVisitor;
@@ -15,6 +14,7 @@ import wyvern.target.corewyvernIL.modules.Module;
 import wyvern.target.corewyvernIL.support.InterpreterState;
 import wyvern.target.corewyvernIL.support.TypeContext;
 import wyvern.tools.errors.ToolError;
+import wyvern.stdlib.support.CommandLineUtils;
 
 public final class Interpreter {
     private Interpreter() { }
@@ -26,16 +26,24 @@ public final class Interpreter {
      */
     public static void main(String[] args) {
         // check if 1 argument is supplied.
-        if (args.length != 1) {
+        //if (args.length != 1) {
             // disable prelude if two arguments found, debugger
+        if (args.length < 1) {
+            System.err.println("usage: wyvern <filename>");
+            System.exit(1);
+        }
+        else {
             if (args.length == 2) {
                 Globals.setUsePrelude(false);
             }
-            else {
-                System.err.println("usage: wyvern <filename>");
-                System.exit(1);
-            }
+            // set command line arguments
+            CommandLineUtils cmdArgs = new CommandLineUtils(args);
         }
+          //  else {
+           //     System.err.println("usage: wyvern <filename>");
+           //     System.exit(1);
+           // }
+        //}
         String filename = args[0];
         Path filepath = Paths.get(filename);
 
